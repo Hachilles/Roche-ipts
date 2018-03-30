@@ -1,0 +1,11 @@
+[
+{"desc":"APAC Workflow SPC",	"code":"I.52.51001.00.04.00"},
+{"desc":"APAC Analytics & Integration Solutions SPC",	"code":"I.52.51001.01.00.00"},
+{"desc":"APAC Prisma Server Decommissioning" 	,	"code":"I.52.51001.01.00.06"},
+{"desc":"APAC LabSurvey dashboard for CPS",	"code":"I.52.51001.01.00.11"},
+{"desc":"APAC Finance Dashboard Phase 5"	,	"code":"I.52.51001.01.00.12"},
+{"desc":"APAC Commercial Excellence Rollout"	,	"code":"I.52.51001.01.00.13"},
+{"desc":"APAC Distributor Performance Management"	,	"code":"I.52.51001.01.00.14"},
+{"desc":"APAC EAI SPC"	,	"code":"I.52.51001.02.00.00"},
+{"desc":"APAC PI 7.5 upgrade",	"code":"I.52.51001.02.00.01"}
+]

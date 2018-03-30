@@ -1,0 +1,957 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/paper-badge/paper-badge.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="../bower_components/neon-animation/animations/slide-from-bottom-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/slide-down-animation.html">
+<link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../bower_components/paper-item/all-imports.html">
+
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="my-icons.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-storage-multiupload.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../bower_components/vaadin-upload/vaadin-upload.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="../bower_components/neon-animation/animations/slide-from-bottom-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/slide-down-animation.html">
+
+<!-- <link rel="lazy-import" href="my-view1.html">
+<link rel="lazy-import" href="my-view2.html">
+<link rel="lazy-import" href="my-view3.html">
+<link rel="lazy-import" href="my-view404.html"> -->
+
+<dom-module id="my-app">
+  <template>
+    <style>
+      :host {
+        --app-selection-color: rgba(255, 87, 87, .87);
+        --app-primary-color: #4285f4;
+        --app-secondary-color: black;
+        --app-drawer-width: 300px;
+        --bg-error-color:rgba(219,32,36,.9);;
+        --bg-warn-color:rgba(244, 194, 13, .9);
+        --bg-info-color:rgba(60, 186, 84, .9);
+        --txt-error-color:#f4f4f4;
+        --txt-warn-color:#f4f4f4;
+        --txt-info-color:#f4f4f4;
+
+        display: block;
+
+        background: #eeeeee;
+      }
+
+      app-drawer-layout:not([narrow]) [drawer-toggle] {
+        display: none;
+      }
+
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+      .lite_header paper-icon-button{
+        color:#aaaaaa;
+      }
+      .lite_header{
+        background: #fefefe;
+        -webkit-box-shadow: 0 3px 4px 0 rgba(0,0,0,0.14), 0 3px 3px -2px rgba(0,0,0,0.12), 0 1px 8px 0 rgba(0,0,0,0.2);
+        box-shadow: 0 3px 4px 0 rgba(0,0,0,0.14), 0 3px 3px -2px rgba(0,0,0,0.12), 0 1px 8px 0 rgba(0,0,0,0.2);
+
+      }
+      .drawer-list {
+        margin: 0 20px;
+      }
+      .drawer-list a {
+        display: block;
+        padding: 0 16px;
+        text-decoration: none;
+        color: var(--app-secondary-color);
+        line-height: 40px;
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+        font-weight: bold;
+      }
+      .dialog{
+        border-radius: 5px;
+      }
+      #newtrip_dailog{
+        width:500px;
+      }
+      .item {
+        display: var(--layout-horizontal_-_display);
+        -ms-flex-direction: var(--layout-horizontal_-_-ms-flex-direction);
+        -webkit-flex-direction: var(--layout-horizontal_-_-webkit-flex-direction);
+        flex-direction: var(--layout-horizontal_-_flex-direction);
+        padding: 20px;
+        background-color: white;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        margin-bottom: -1px;
+        position: relative;
+    }
+    .item:last-of-type{
+      margin-bottom: 0px;
+    }
+    .avatar {
+      height: 40px;
+      width: 40px;
+      border-radius: 20px;
+      box-sizing: border-box;
+      background-color: #DDD;
+    }
+    .primary {
+      font-size: 13px;
+      font-weight: bold;
+    }
+    .shortText, .longText {
+      font-size: 12px;
+    }
+    .pad {
+      padding: 0 16px;
+      -ms-flex: var(--layout-flex_-_-ms-flex);
+      -webkit-flex: var(--layout-flex_-_-webkit-flex);
+      flex: var(--layout-flex_-_flex);
+      -webkit-flex-basis: var(--layout-flex_-_-webkit-flex-basis);
+      flex-basis: var(--layout-flex_-_flex-basis);
+      display: var(--layout-vertical_-_display);
+      -ms-flex-direction: var(--layout-vertical_-_-ms-flex-direction);
+      -webkit-flex-direction: var(--layout-vertical_-_-webkit-flex-direction);
+      flex-direction: var(--layout-vertical_-_flex-direction);
+  }
+  .title{
+    text-align: center;
+    font-size: 40px;
+    font-weight: 700;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.7);
+    -webkit-text-shadow: 0 1px 10px rgba(0, 0, 0, 0.7);
+    -moz-text-shadow: 0 1px 10px rgba(0, 0, 0, 0.7);
+  }
+
+  .add_trip_fab,.nbr_bills{
+    position: fixed;
+    left:calc(100vw - 65px);
+    bottom: 70px;
+    background: rgba(255, 87, 87, .97);
+    z-index: 10;
+  }
+  .nbr_bills{
+    top:200px;
+  }
+  .item-icon{
+    color: rgba(255, 87, 87, .97);
+  }
+  .list_container{
+    margin:0;
+    padding:1px;
+  }
+  .fulldialog{
+    width: 100%;
+    margin:0;
+    left:0;
+    top:0;
+    position: absolute;
+    height: 100vh;
+  }
+  paper-ripple{
+    color:var(--app-selection-color);
+  }
+  .trips_contatiner{
+    padding-bottom:100px;
+    height: calc(100vh - 64px );
+    overflow-x: scroll;
+  }
+  /* Desktop */
+  @media (min-width:642px) {
+
+    .bottom-fix{
+      width: calc(100% - 300px);
+    }
+    .full_img{
+      height: 500px;
+      width: calc(100vw - 320px);
+    }
+    .left-drawer{
+      --app-drawer-width: 300px;
+    }
+  }
+  /* Mobile */
+  @media (max-width: 642px) {
+
+    .bottom-fix{
+      width: 100%;
+    }
+    .full_img{
+      height: 500px;
+      width: calc(100vw - 20px);
+    }
+    .country_dailog{
+      width: 100vw;
+      min-height: 100vh;
+      margin:0;
+      left:0;
+      top:var(--status-bar-padding-top);
+      position: absolute;
+    }
+    .list_container{
+      --paper-dialog-scrollable:{
+        padding:0px;
+      }
+    }
+    .title{
+      margin-left:-30px;
+    }
+    .left-drawer{
+      --app-drawer-width: 100vw;
+    }
+  }
+
+  paper-icon-button{
+    --paper-icon-button-ink-color:var(--app-selection-color);
+  }
+  .thumb_nail{
+    height:150px;
+    width:150px;
+    border-radius: 5%;
+  }
+  .thumb_wrap{
+    border-radius: 10%;
+    margin:10px;
+    border: 5px solid #ffffff;
+    height: 150px;
+  }
+  .trip_title{
+    color:rgba(0, 0, 0, .5);
+    @apply --layout-self-center;
+    text-align: center;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+  .flex-horizontal {
+    @apply(--layout-horizontal);
+  }
+  .flexchild {
+    @apply(--layout-flex);
+  }
+  div[hidden]{
+    display: none;
+  }
+  .selReceipt{
+    border: 5px solid rgb(46, 204, 113);
+  }
+  .flex-wrap {
+    @apply --layout-horizontal;
+    @apply --layout-wrap;
+  }
+  .warning{
+    color:rgba(255, 40, 40, .87);
+  }
+  .message{
+    font-size: 14px;
+    color:#404040;
+  }
+  paper-button.select {
+    background-color: #dddddd;
+    color: white;
+    border-radius: 0;
+    font-size:14px;
+  }
+  paper-button.select[active] {
+    background-color: rgb(46, 204, 113);
+  }
+
+  .full_view_container,.no_receipt_container{
+    text-align: center;
+    @apply --layout-self-center;
+  }
+  .bottom-fix{
+    position: fixed;
+    bottom:0;
+    padding:0;
+  }
+  .bottom-fix paper-button{
+    background: rgba(40,40,40,.5);
+    color:#efefef;
+    margin:0;
+    border-collapse: collapse;
+    border-radius:0px;
+    font-weight: 400;
+    line-height: 2.5em;
+  }
+  #toastErr {
+    --paper-toast-background-color: var(--bg-error-color);
+    --paper-toast-color: var(--txt-error-color);
+    font-size: 1em;
+  }
+  #toastInfo {
+  --paper-toast-background-color: var(--bg-info-color);
+  --paper-toast-color: var(--txt-info-color);
+  font-size: 1em;
+  }
+  .left-icon{
+    margin-right: 30px;
+  }
+  .right-icon{
+    margin-leftt: 30px;
+  }
+  .progress{
+    height: 50px;
+  }
+  .center{
+    @apply --layout-self-center;
+  }
+  .country_input{
+    margin-top: 20px;
+  }
+  .country_label{
+    min-width: 100px;
+    background: var(--app-selection-color);
+    color:#efefef;
+    padding:5px;
+    display:inline-block;
+    text-align: center;
+    border-radius: 5px;
+  }
+  paper-dialog h2{
+    color:rgba(255,87,87,.87);
+  }
+  .addtrip_btn{
+    background: rgb(46, 204, 113);
+    border-radius: 50%;
+    color: #fff;
+  }
+  .side-title{
+    color:rgba(0,0,0,.5);
+    font-weight: 700;
+  }
+  .badge{
+    z-index: 100;
+    --paper-badge-background:rgb(46, 204, 113);
+    --paper-badge-text-color:#ffffff;
+    --paper-badge-margin-left:-16px;
+    --paper-badge-margin-bottom:-3px;
+    --paper-badge-width: 30px;
+    --paper-badge-height: 30px;
+    --paper-badge:{
+      font-size:18px;
+    }
+  }
+  .country_search{
+    width: 100%;
+    color: rgba(0,0,0,.8);
+  }
+  iron-pages{
+    background: #eeeeee;
+    min-height: calc(100vh - 105px);
+  }
+  .action-icon{
+    padding: 4px;
+  }
+  .no_receipt_desc{
+    font-size: calc(5px + 2vw);
+    font-weight: 700;
+    color:rgba(255,87,87,.9);
+  }
+  .no_receipts_img{
+    height: 300px;
+    width: 300px;
+  }
+  .close_btn{
+    @apply --layout-self-center;
+    color:#404040;
+  }
+  .back-icon{
+    color:rgba(0,0,0,.5);
+    margin-right: 20px;
+  }
+  .back-icon[hide]{
+    display:none;
+  }
+  .side-header{
+    background: #eeeeee;
+  }
+  .trip_info{
+  margin-top:-24px;
+  }
+  .wbse{
+    width:100%;
+  }
+</style>
+
+    <app-location
+        route="{{route}}"
+        url-space-regex="^[[rootPath]]">
+    </app-location>
+
+    <app-route
+        route="{{route}}"
+        pattern="[[rootPath]]:page"
+        data="{{routeData}}"
+        tail="{{subroute}}">
+    </app-route>
+
+    <firebase-app
+      name="rosheipts"
+      auth-domain="rosheipts.firebaseapp.com"
+      database-url="https://rosheipts.firebaseio.com/"
+      api-key="AIzaSyCvD5xmpW1bg_SoCXZlRM2kj-88Rt90E-0"
+      storage-bucket="rosheipts.appspot.com">
+    </firebase-app>
+
+    <firebase-query
+      id="query"
+      app-name="rosheipts"
+      path="/user">
+    </firebase-query>
+
+    <firebase-storage-multiupload
+      id="fs"
+      app-name="rosheipts"
+      path="/user"
+      upload-tasks="{{uploadedFiles}}"
+      on-error="catchError"
+      force-unique>
+    </firebase-storage-multiupload>
+
+    <iron-ajax
+      auto
+      url="/src/files/wbse.json"
+      handle-as="json"
+      on-response="handleWbseResponse"
+      last-response="{{list_wbse}}"></iron-ajax>
+
+    <iron-ajax
+      auto
+      url="/src/files/country_list.json"
+      handle-as="json"
+      on-response="handleResponse"
+      last-response="{{list_countries}}"></iron-ajax>
+
+    <paper-toast id="toastErr" text="" class="fit-bottom"></paper-toast>
+    <paper-toast id="toastInfo" text="" class="fit-bottom"></paper-toast>
+
+    <div hidden>
+        <vaadin-upload id="file_uploader" files-changed="upload"></vaadin-upload>
+    </div>
+    <paper-fab id="up_btn" icon="file-upload" class="add_trip_fab" on-tap="fileUpload"></paper-fab>
+    <paper-badge class="badge" label="[[nbrOfBills]]" for="up_btn"></paper-badge>
+
+    <app-drawer-layout fullbleed narrow="{{narrow}}">
+
+      <!-- Drawer content -->
+      <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]" disable-swipe class="left-drawer" transition-duration="500">
+      <app-toolbar class="side-header">
+        <iron-icon class="back-icon" icon="arrow-back" on-tap="closeDrawer" hide$='[[!narrow]]'></iron-icon>
+        <div main-title class="side-title">My Trips</div>
+        <paper-icon-button icon="add" on-tap="newTrip" class="addtrip_btn"></paper-icon-button>
+      </app-toolbar>
+
+        <div class="trips_contatiner">
+        <template is="dom-repeat" items="[[trips]]" as="trip" index-as="index">
+          <div class="item" id$='trip_[[trip.id]]'>
+            <paper-ripple recenters noink id$="ripple_[[trip.id]]"></paper-ripple>
+            <img class="avatar" src="[[flagUrl(trip.country.code)]]" on-tap="chooseATrip"></img>
+            <div class="pad" on-tap="chooseATrip">
+              <div class="primary">{{trip.description}}</div>
+              <div class="shortText">[[trip.country.name]] - [[trip.trip_on]]</div>
+            </div>
+            <iron-icon icon="delete" class='item-icon' on-tap="_confirmDeleteTrip"></iron-icon>
+          </div>
+        </template>
+      </div>
+      </app-drawer>
+
+      <!-- Main content -->
+      <app-header-layout has-scrolling-region>
+        <app-header slot="header" fixed reveals effects="waterfall">
+          <app-toolbar>
+            <paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button>
+            <div main-title class="title">Roche-ipts</div>
+          </app-toolbar>
+          <div class="lite_header flex-horizontal">
+            <div class="trip_title flexchild">{{selectedTrip.description}} </div>
+            <div hidden$='{{!progress}}'> <img src="../images/loading.gif" class="progress"> </div>
+            <div>
+              <paper-icon-button icon="delete-forever" on-tap="_deleteConfirmReciepts" class="action-icon"></paper-icon-button>
+              <paper-icon-button icon="file-download" class="action-icon"></paper-icon-button>
+              <paper-button id="toggleBtn" icon="select-all" toggles class="select" on-tap="toggleSelect"> select </paper-button>
+            </div>
+          </div>
+        </app-header>
+
+
+        <iron-pages
+            selected="[[page]]"
+            attr-for-selected="name"
+            fallback-selection="no-receipt"
+            role="main">
+            <div name="thumb-view">
+              <iron-selector id="selector" selected-class="selReceipt" class="flex-wrap" attr-for-selected="name" selectable="div.thumb_wrap" multi="[[enableSelection]]" selected-values="[[selectedReceipts]]">
+                <template is="dom-repeat" items="[[receipts]]" as="receipt" index-as="index">
+                  <div name$="[[receipt.id]]" id$="receipt_[[receipt.id]]" class="thumb_wrap" on-tap="viewImageDetail">
+                    <iron-image class="thumb_nail" preload placeholder="../images/loading.gif" fade sizing="cover" src="[[receipt.thumb_url]]"></iron-image>
+                  </div>
+                </template>
+              </iron-selector>
+            </div>
+            <div name="no-receipt" class="no_receipt_container">
+              <iron-image class="no_receipts_img" preload fade sizing="cover" src="../images/no-image.png"></iron-image>
+              <div class="no_receipt_desc"> No receipts found in [[selectedTrip.description]] folder</div>
+            </div>
+            <div name="full-view" class="full_view_container">
+              <iron-image id="full_img" class="full_img" preload placeholder="../images/loading.gif" fade sizing="contain"></iron-image>
+              <div class="bottom-fix flex-horizontal">
+                <paper-button class="flexchild" icon="back-arrow" raised on-tap="goback"><iron-icon icon="arrow-back" class="left-icon"></iron-icon>Back</paper-button>
+                <paper-button class="flexchild" raised on-tap="deleteReceipt">Delete <iron-icon icon="delete-forever" class=right-icon></iron-icon></paper-button>
+              </div>
+            </div>
+      </iron-pages>
+
+      </app-header-layout>
+    </app-drawer-layout>
+
+    <paper-dialog id="country_dailog" class="country_dailog" modal entry-animation="slide-from-bottom-animation"
+              exit-animation="slide-down-animation">
+      <div class="buttons">
+        <paper-input id="search" type="text" class="country_search" placeholder="Search" value="{{searchTxt}}" on-value-changed="filter"></paper-input>
+        <paper-icon-button dialog-dismiss autofocus icon="close" class="close_btn"></paper-icon-button>
+      </div>
+        <paper-dialog-scrollable id="scrollable" class="list_container">
+          <template is="dom-repeat" items="[[tmp_list_countries]]" as="country" index-as="index">
+            <div class="item" on-tap="selectCountry">
+              <paper-ripple recenters></paper-ripple>
+                <img class="avatar" src="[[flagUrl(country.code)]]"></img>
+                <div class="pad">
+                  <div class="primary">{{country.name}}</div>
+                  <div class="shortText">{{country.code}}</div>
+                </div>
+              <!-- <iron-icon icon="delete" class='item-icon' on-tap="deleteTrip"></iron-icon> -->
+            </div>
+          </template>
+      </paper-dialog-scrollable>
+    </paper-dialog>
+
+
+    <paper-dialog id="newtrip_dailog" class="dialog" modal>
+      <h2>New trip</h2>
+      <iron-form id="newtrip_form">
+        <form>
+            <div class="trip_info">
+              <div><paper-input type="text" class="input" name="description" required label="Description"></paper-input></div>
+              <div on-tap="openCountryList" class="country_input">   Tirp to : <span class="country_label">[[selectedCountry.name]] </span> </div>
+              <paper-input type="text" class="input" name="trip_on" required label="Trip on"></paper-input>
+              <div class="country_label">WBS Element</div>
+              <vaadin-combo-box class="wbse" items="[[list_wbse]]" item-value-path="code" item-label-path="desc">
+                <template>
+                  <paper-icon-item>
+                    <paper-item-body two-line>
+                      <div>[[item.desc]]</div>
+                      <div secondary>[[item.code]]</div>
+                    </paper-item-body>
+                  </paper-icon-item>
+                </template>
+              </vaadin-combo-box>
+            </div>
+        </form>
+      </iron-form>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button autofocus on-tap="_saveTrip">Save</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="deleteReceipts_dialog" class="dialog" modal>
+      <h2 class="warning">Delete Receipts</h2>
+      <div class="warning">
+          Are you sure want to delete selected files?
+          <span class="message"> Selected files will be deleted permanently </span>
+      </div>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm autofocus on-tap="deleteSelectedReciepts">Delete</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="deleteTrip_dialog" class="dialog" modal>
+      <h2 class="warning">Delete Trip</h2>
+      <div class="warning">
+        Are you sure want to delete folder <b>[[selectedTrip.description]]</b> ?
+        <span class="message">This operation will delete all recipts linked to this trip and will not be recoved</span>
+      </div>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm autofocus on-tap="deleteTrip">Delete</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="deleteFullViewReceipts_dialog" class="dialog" modal>
+      <h2 class="warning">Delete Receipt</h2>
+      <div class="warning">
+          Are you sure want to delete this Receipt?
+          <span class="message"> Cant be recovered once deleted</span>
+      </div>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm autofocus on-tap="_confirmDeleteReceipt">Delete</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>
+    class MyApp extends Polymer.Element {
+      static get is() { return 'my-app'; }
+
+      static get properties() {
+        return {
+          page: {
+            type: String,
+            reflectToAttribute: true,
+            value: 'thumb-view'
+            //observer: '_pageChanged',
+          },
+          routeData: Object,
+          subroute: String,
+          // This shouldn't be neccessary, but the Analyzer isn't picking up
+          // Polymer.Element#rootPath
+          rootPath: String,
+          trips:{
+            type:Array,
+            value:[]
+          },
+          progress:{
+            type:Boolean,
+            value: false
+          },
+          receipts:{
+            type:Array,
+            value:[]
+          },
+          selectedTrip:{
+            type:Object
+          },
+          selectedCountry:{
+            type:Object
+          },
+          selectedReceipt:{
+            type:Object
+          },
+          list_wbse:{
+            type:Array,
+            value:[]
+          },
+          list_countries:{
+            type:Array,
+            value:[]
+          },
+          tmp_list_countries:{
+            type:Array,
+            value:[]
+          },
+          selectedReceipts:{
+            type:Array,
+            value:[]
+          },
+          enableSelection:{
+            type:Boolean,
+            value:false
+          },
+          nbrOfBills:{
+            type:Number,
+            value:0
+          },
+          searchTxt: String
+        };
+      }
+
+      static get observers() {
+        return [
+          '_routePageChanged(routeData.page)',
+        ];
+      }
+      ready(){
+        super.ready();
+        var me = this;
+        this.$.file_uploader.addEventListener('upload-request', function(event) {
+          event.preventDefault();
+          me.upload(event);
+        });
+        //this.$.search.addEventListener('value-changed', this.filter());
+        this.init();
+      }
+      handleResponse(e){
+        this.set('tmp_list_countries', this.list_countries);
+      }
+      handleWbseResponse(e){
+        console.log(this.list_wbse);
+      }
+      flagUrl(code){
+        code = code?code.toLowerCase():'in';
+        return '../images/flags/1x1/'+code+'.svg';
+      }
+      fileUpload(){
+        if(this.selectedTrip){
+          this.$.file_uploader._onAddFilesClick();
+        }else{
+          this.$.toastErr.show({text: 'No trip is selected to upload a file'});
+        }
+      }
+      upload(event) {
+        var files = event.detail.file;
+        var me = this;
+        var storageRef = this.$.fs.ref;
+        var ref = this.$.query.ref;
+        //var tmp_description = this.selectedTrip.description;
+        this.set('progress', true);
+        //this.set('selectedTrip.description', 'Uploading files..');
+        var cMetadata = {customMetadata: {
+            'db_path': 'user/list_' + me.selectedTrip.id
+        }};
+        storageRef.child(this.selectedTrip.id + "/h_"+new Date().getTime() +'_'+ Math.floor(Math.random() * 200) +".jpg").put(files, cMetadata).then(function(snapshot) {
+          /*var url = snapshot.downloadURL;
+          me.photoURL = url;
+          return ref.child('list_' + me.selectedTrip.id).push().set({receipt_url: url}).then(function(){
+             me.set('progress', false);
+           });*/
+           me.set('progress', false);
+           //me.set('selectedTrip.description', tmp_description);
+           me.$.toastErr.show({
+             text: 'Receipt has been uploaded'
+           });
+        }).catch(function(error) {
+          console.log(error);
+          me.$.toastErr.show({
+            text: error.detail.message
+          });
+          me.set('progress', false);
+          //me.set('selectedTrip.description', tmp_description);
+        });
+      }
+      _routePageChanged(page) {
+        // If no page was found in the route data, page will be an empty string.
+        // Default to 'view1' in that case.
+        this.page = page || 'thumb-view';
+
+        // Close a non-persistent drawer when the page & route are changed.
+        if (!this.$.drawer.persistent) {
+          this.$.drawer.close();
+        }
+      }
+      closeDrawer(){
+        this.$.drawer.close();
+      }
+      // _pageChanged(page) {
+      //   // Load page import on demand. Show 404 page if fails
+      //   var resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
+      //   Polymer.importHref(
+      //       resolvedPageUrl,
+      //       null,
+      //       this._showPage404.bind(this),
+      //       true);
+      // }
+
+      _showPage404() {
+        this.page = 'view404';
+      }
+      newTrip(){
+        this.selectedCountry = {name:'Select country'};
+        this.set("tmp_list_countries", this.list_countries);
+        this.$.newtrip_dailog.open();
+      }
+      selectCountry(e){
+        this.set('selectedCountry', e.model.country);
+        this.$.country_dailog.close();
+      }
+      chooseATrip(e){
+        this.goback();
+        var ref = this.$.query.ref;
+        ref.child('list_' + this.selectedTrip.id).off('child_added', listener);
+        if(e){
+          this.selectedTrip = e.model.trip;
+          this.selectedCountry = this.selectedTrip.country;
+          this.shadowRoot.querySelector('#ripple_'+ this.selectedTrip.id).simulatedRipple();
+        }
+        var me = this;
+        me.set("nbrOfBills", 0);
+        this.set('receipts',[]);
+        this.set('page','no-receipt');
+        var listener = function(receipt){
+            var t = receipt.val();
+            t.id = receipt.key;
+            me.push('receipts', t);
+            me.set('nbrOfBills',me.nbrOfBills + 1);
+            me.set('page','thumb-view');
+        };
+        if(this.narrow){
+          this.$.drawer.close();
+        }
+        return ref.child('list_' + me.selectedTrip.id).on('child_added', listener);
+      }
+      _confirmDeleteTrip(e){
+        this.selectedTrip = e.model.trip;
+        this.$.deleteTrip_dialog.open();
+      }
+      deleteTrip(){
+        var me = this;
+        var ref = this.$.query.ref;
+        return ref.child('trips/'+this.selectedTrip.id).remove().then(v=>{
+          me.$.toastInfo.show({text:'Trip '+ me.selectedTrip.description +' deleted'});
+          var index = me.trips.indexOf(me .selectedTrip);
+          me.splice('trips', index, 1);
+          if(me.trips && me.trips.length > 0){
+            me.set('selectedTrip', me.trips[0]);
+            me.chooseATrip();
+          }
+        });
+      }
+      _saveTrip(){
+        var ref = this.$.query.ref;
+        if(!this.selectedCountry.code){
+          this.$.toastErr.show({'text':'please coutry to travel'});
+          return null;
+        }
+        if(this.$.newtrip_form.validate()){
+          this.set('selectedTrip', null);
+          var formData = this.$.newtrip_form.serializeForm();
+          formData.country = this.selectedCountry;
+          this.$.newtrip_dailog.close();
+          return ref.child('trips').push().set(formData);
+        }else{
+          return null;
+        }
+      }
+      openCountryList(){
+        this.$.country_dailog.open();
+      }
+
+      init(){
+        var ref = this.$.query.ref.child('trips');
+        var me = this;
+        ref.on('child_added', function(trip){
+          var t = trip.val();
+          t.id = trip.key;
+          if(!me.selectedTrip){
+            me.selectedTrip = t;
+            me.chooseATrip();
+            me.set('page', 'thumb-view');
+          }
+          me.push('trips', t);
+          me.set('nbrOfBills', me.trips.length);
+        }, function(err){
+          me.set('page', 'no-receipt');
+        });
+        // ref.on('child_removed', function(trip){
+        //
+        //     //me.push('trips', t);
+        // });
+
+    }
+    _deleteConfirmReciepts(){
+      if(this.selectedReceipts && this.selectedReceipts.length > 0){
+        this.$.deleteReceipts_dialog.open();
+      }else{
+        this.$.toastInfo.show({text:'No files has been selected to be deleted'});
+      }
+    }
+    deleteSelectedReciepts(){
+      //console.log(this.selectedReceipts);
+      var ref = this.$.query.ref;
+      for(var i in this.selectedReceipts){
+        ref.child('list_' + this.selectedTrip.id+ '/' + this.selectedReceipts[i]).remove();
+        this.set('nbrOfBills',this.nbrOfBills - 1);
+        this.shadowRoot.querySelector('#receipt_'+ this.selectedReceipts[i]).remove();
+      }
+      if(this.nbrOfBills === 0){
+        this.set('page','no-receipt');
+      }
+      this.set('selectedReceipts', []);
+    }
+    toggleSelect(){
+      this.set('enableSelection', this.$.toggleBtn.active);
+      if(this.enableSelection === false){
+        this.set('selectedReceipts', []);
+        //need below 2 statement to manage deselection
+        this.$.selector.selectedValues = [];
+        this.$.selector.selectedValues = this.selectedReceipts;
+        this.$.selector.selectedClass = 'none';
+      }else{
+        this.$.selector.selectedClass = 'selReceipt';
+      }
+    }
+    viewImageDetail(e){
+      if(this.enableSelection === false){
+        this.$.full_img.src = e.model.receipt.receipt_url;
+        this.selectedReceipt = e.model.receipt;
+        this.set('page', 'full-view');
+      }
+    }
+    goback(){
+      this.set('page', 'thumb-view');
+    }
+    deleteReceipt(){
+      this.$.deleteFullViewReceipts_dialog.open();
+    }
+    _confirmDeleteReceipt(){
+      var ref = this.$.query.ref;
+      ref.child('list_' + this.selectedTrip.id+ '/' + this.selectedReceipt.id).remove();
+      this.set('nbrOfBills',this.nbrOfBills - 1);
+      this.shadowRoot.querySelector('#receipt_'+ this.selectedReceipt.id).remove();
+      this.goback();
+      this.$.toastInfo.show({text:'File deleted successfully'});
+    }
+    filter(e){
+      var s_txt = e.detail.value;
+      if(!s_txt || s_txt.length < 3){
+        this.set('tmp_list_countries', this.list_countries);
+        return;
+      }
+      s_txt =  s_txt.toLowerCase();
+      var result = [];
+      for(var i in this.list_countries){
+        var item = this.list_countries[i];
+        var name = item.name.toLowerCase();
+        if(name.includes(s_txt)){
+          result.push(item);
+        }
+      }
+      this.set('tmp_list_countries', result);
+    }
+  }
+  window.customElements.define(MyApp.is, MyApp);
+  </script>
+</dom-module>
